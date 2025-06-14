@@ -5,7 +5,7 @@ FROM openjdk:21-jdk
 WORKDIR /app
 
 # Install Maven
-RUN apt-get update && apt-get install -y maven
+RUN yum install -y maven
 
 # Verify installation
 RUN mvn -version
