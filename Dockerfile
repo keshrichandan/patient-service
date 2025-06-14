@@ -1,23 +1,20 @@
-# Use official OpenJDK 21 as the base image
-FROM openjdk:21-jdk
-
-# Set working directory
+# Use the official Maven image to build the project
+FROM maven:3.8.6-openjdk-17 AS builder
 WORKDIR /app
 
-# Install Maven
-RUN yum install -y maven
+# Copy the project files and build the application
+COPY . .
+RUN mvn clean package
 
-# Verify installation
-RUN mvn -version
+# Use a lightweight Java runtime to run the application
+FROM openjdk:17-jdk-slim
+WORKDIR /app
 
-# Copy JAR file from the target directory (assuming Maven or Gradle is used)
-COPY target/patient-service-0.0.1-SNAPSHOT.jar app.jar
+# Copy the built JAR from the builder stage
+COPY --from=builder /app/target/*.jar app.jar
 
-# Buid project
-RUN mvn clean install
-
-# Expose the application port (change if needed)
+# Expose the application port
 EXPOSE 8080
 
-# Run the application
+# Run the Spring Boot application
 ENTRYPOINT ["java", "-jar", "app.jar"]
