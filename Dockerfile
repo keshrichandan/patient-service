@@ -1,5 +1,5 @@
 # Use the official Maven image to build the project
-FROM maven:3.8.6-openjdk-17 AS builder
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
 
 # Copy the project files and build the application
@@ -7,7 +7,7 @@ COPY . .
 RUN mvn clean package
 
 # Use a lightweight Java runtime to run the application
-FROM openjdk:17-jdk-slim
+FROM openjdk:21-jdk
 WORKDIR /app
 
 # Copy the built JAR from the builder stage
