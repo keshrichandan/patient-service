@@ -1,18 +1,22 @@
-package com.pm.patient_service.model;
+package com.pm.patient_service.entity.patientEntity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
+@Table(name = "patient",schema = "testdb")
 public class Patient {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotNull
     private String name;
@@ -31,6 +35,9 @@ public class Patient {
     @NotNull
     private LocalDate registeredDate;
 
+//    @Version
+//    private Integer version;
+
     public @NotNull String getName() {
         return name;
     }
@@ -39,20 +46,19 @@ public class Patient {
         this.name = name;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public @NotNull @Email String getEmail() {
         return email;
     }
 
     public void setEmail(@NotNull @Email String email) {
         this.email = email;
+    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public @NotNull String getAddress() {

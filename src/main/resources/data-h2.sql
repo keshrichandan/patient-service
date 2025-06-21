@@ -1,0 +1,2 @@
+--INSERT INTO patient (id,name, email, address, date_of_birth, registered_date)
+--VALUES ('12345','John Doe', 'john@example.com', '123 Main St', '1990-01-01', CURRENT_DATE);

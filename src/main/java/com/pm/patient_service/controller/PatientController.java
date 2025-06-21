@@ -1,7 +1,9 @@
 package com.pm.patient_service.controller;
 
+import com.pm.patient_service.dto.AppointmentRequest;
 import com.pm.patient_service.dto.PatientRequestDTO;
 import com.pm.patient_service.dto.PatientResponseDTO;
+import com.pm.patient_service.entity.appointmentEntity.Appointment;
 import com.pm.patient_service.service.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -55,7 +57,7 @@ public class PatientController {
     //http://localhost:4000/patients/update/{id}
     @PutMapping("/update/{id}")
     @Operation(description = "To update patient record by Id")
-    public ResponseEntity<PatientResponseDTO> updatePatient(@PathVariable UUID id, @RequestBody PatientRequestDTO patientRequestDTO){
+    public ResponseEntity<PatientResponseDTO> updatePatient(@PathVariable Long id, @RequestBody PatientRequestDTO patientRequestDTO){
         log.info("getting request for UUID :{}",id);
         PatientResponseDTO updatedPatientRecord = patientService.updatePatient(id, patientRequestDTO);
         log.info("Record updated successfully for id: {}, {}", id, updatedPatientRecord);
@@ -65,7 +67,7 @@ public class PatientController {
     //http://localhost:4000/patients/update
     @PutMapping("/update")
     @Operation(description = "To update patient record by requestHeader")
-    public ResponseEntity<PatientResponseDTO> updatePatientByHeader(@RequestHeader(required = true) UUID id,
+    public ResponseEntity<PatientResponseDTO> updatePatientByHeader(@RequestHeader(required = true) Long id,
                                                                     @Validated({Default.class}) @RequestBody PatientRequestDTO patientRequestDTO){
         log.info("getting request for UUID from header :{}",id);
         PatientResponseDTO updatedPatientRecord = patientService.updatePatient(id, patientRequestDTO);
@@ -76,7 +78,7 @@ public class PatientController {
     //http://localhost:4000/patients/removePatientById?{id}
     @DeleteMapping("/removePatientById")
     @Operation(description="To remove patient")
-    public ResponseEntity<?> deletePatientById(@RequestParam UUID id){
+    public ResponseEntity<?> deletePatientById(@RequestParam Long id){
         log.info("getting request to remove patient for the Id: {}",id);
         boolean isDeleted = patientService.deletePatient(id);
         if(!isDeleted){
@@ -87,5 +89,12 @@ public class PatientController {
             log.info("record deleted successfully: {}",id);
         return ResponseEntity.ok("Patient removed successfully!");
 
+    }
+    //http://localhost:4000/patients/bookAppointment
+    @PostMapping("/bookAppointment")
+    @Operation(description="To create patient appointments")
+    public ResponseEntity<Appointment> bookAppointments(@RequestBody AppointmentRequest appointmentRequest){
+        Appointment savedAppointment = patientService.bookAppointment(appointmentRequest);
+        return new ResponseEntity<>(savedAppointment, HttpStatus.OK);
     }
 }

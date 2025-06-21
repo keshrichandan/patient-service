@@ -1,27 +1,31 @@
 package com.pm.patient_service.service;
 
+import com.pm.patient_service.dto.AppointmentRequest;
 import com.pm.patient_service.dto.PatientRequestDTO;
 import com.pm.patient_service.dto.PatientResponseDTO;
+import com.pm.patient_service.entity.appointmentEntity.Appointment;
 import com.pm.patient_service.exception.EmailAlreadyExistException;
 import com.pm.patient_service.exception.PatientNotFoundException;
 import com.pm.patient_service.mapper.PatientMapper;
-import com.pm.patient_service.model.Patient;
+import com.pm.patient_service.entity.patientEntity.Patient;
+import com.pm.patient_service.mysqlRepository.AppointmentRepository;
 import com.pm.patient_service.repository.PatientRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
 public class PatientService {
 
     private final PatientRepository patientRepository;
+    private final AppointmentRepository appointmentRepository;
 
-    public PatientService(PatientRepository patientRepository) {
+    public PatientService(PatientRepository patientRepository, AppointmentRepository appointmentRepository) {
         this.patientRepository = patientRepository;
+        this.appointmentRepository =appointmentRepository;
     }
 
     public List<PatientResponseDTO> getPatients() {
@@ -40,7 +44,7 @@ public class PatientService {
         return PatientMapper.toDTO(savedPatient);
     }
 
-    public PatientResponseDTO updatePatient(UUID id, PatientRequestDTO patentRequestDTO){
+    public PatientResponseDTO updatePatient(Long id, PatientRequestDTO patentRequestDTO){
         Patient existingPatient = patientRepository.findById(id).
                 orElseThrow(() -> new PatientNotFoundException("Patient Not found with id: " + id));
 
@@ -63,12 +67,27 @@ public class PatientService {
         return PatientMapper.toDTO(existingPatient);
     }
 
-    public boolean deletePatient(UUID id){
+    public boolean deletePatient(Long id){
 
          if(!patientRepository.existsById(id)){
              return false;
          }
          patientRepository.deleteById(id);
          return true;
+    }
+
+    public Appointment bookAppointment(AppointmentRequest appointmentRequest){
+        Patient existingPatient = patientRepository.findById(Long.valueOf(appointmentRequest.getPatientId())).
+                orElseThrow(() -> new PatientNotFoundException(
+                "Patient Not found with id: " + appointmentRequest.getPatientId() + ". Please register."));
+
+        Appointment aptRequest = PatientMapper.mapToAppointment(appointmentRequest);
+        aptRequest.setPatientName(existingPatient.getName());
+
+        if(!appointmentRepository.findByPatientId(appointmentRequest.getPatientId()).isEmpty()){
+            return null;
+        }
+        System.out.println("appointment result going to be saved: " + aptRequest);
+        return appointmentRepository.save(aptRequest);
     }
 }

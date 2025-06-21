@@ -1,8 +1,10 @@
 package com.pm.patient_service.mapper;
 
+import com.pm.patient_service.dto.AppointmentRequest;
 import com.pm.patient_service.dto.PatientRequestDTO;
 import com.pm.patient_service.dto.PatientResponseDTO;
-import com.pm.patient_service.model.Patient;
+import com.pm.patient_service.entity.appointmentEntity.Appointment;
+import com.pm.patient_service.entity.patientEntity.Patient;
 
 import java.time.LocalDate;
 
@@ -27,5 +29,16 @@ public class PatientMapper {
         patient.setRegisteredDate(LocalDate.parse(patientRequestDTO.getRegisteredDate()));
         
         return patient;
+    }
+
+    public static Appointment mapToAppointment(AppointmentRequest appointmentRequest){
+        Appointment appointment = new Appointment();
+        appointment.setPatientId(appointmentRequest.getPatientId());
+        appointment.setAppointmentDate(appointmentRequest.getAppointmentDate().plusDays(3));
+        appointment.setDiseases(appointmentRequest.getDiseases().name());
+        appointment.setDoctorId(appointmentRequest.getDiseases().getDoctorId());
+        appointment.setDoctorName(appointmentRequest.getDiseases().getDoctorName());
+
+        return appointment;
     }
 }
