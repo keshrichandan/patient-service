@@ -18,7 +18,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class PatientService {
+public class PatientService implements PatientServiceInterface{
 
     private final PatientRepository patientRepository;
     private final AppointmentRepository appointmentRepository;
@@ -89,5 +89,9 @@ public class PatientService {
         }
         System.out.println("appointment result going to be saved: " + aptRequest);
         return appointmentRepository.save(aptRequest);
+    }
+
+    public List<Appointment> getAllAppointments() {
+        return appointmentRepository.findAll();
     }
 }

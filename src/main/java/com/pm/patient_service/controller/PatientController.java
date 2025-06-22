@@ -5,19 +5,19 @@ import com.pm.patient_service.dto.PatientRequestDTO;
 import com.pm.patient_service.dto.PatientResponseDTO;
 import com.pm.patient_service.entity.appointmentEntity.Appointment;
 import com.pm.patient_service.service.PatientService;
+import com.pm.patient_service.service.PatientServiceInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.groups.Default;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.boot.model.internal.XMLContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
+
 
 @Slf4j
 @RestController
@@ -32,8 +32,8 @@ import java.util.UUID;
 @Tag(name="Patient",description="An API for managing Patients")
 public class PatientController {
 
-    private final PatientService patientService;
-    public PatientController(PatientService service) {
+    private final PatientServiceInterface patientService;
+    public PatientController(PatientServiceInterface service) {
         this.patientService = service;
     }
 
@@ -96,5 +96,11 @@ public class PatientController {
     public ResponseEntity<Appointment> bookAppointments(@RequestBody AppointmentRequest appointmentRequest){
         Appointment savedAppointment = patientService.bookAppointment(appointmentRequest);
         return new ResponseEntity<>(savedAppointment, HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllAppointments")
+    @Operation(description = "to find all appointment list")
+    public ResponseEntity<List<Appointment>> getAllAppointments(){
+        return new ResponseEntity<>(patientService.getAllAppointments(),HttpStatus.OK);
     }
 }

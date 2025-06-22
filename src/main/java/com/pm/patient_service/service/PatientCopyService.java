@@ -1,4 +1,5 @@
 package com.pm.patient_service.service;
+import com.github.javafaker.Faker;
 import com.pm.patient_service.entity.patientEntity.Patient;
 import com.pm.patient_service.mysqlRepository.AppointmentRepository;
 import com.pm.patient_service.repository.PatientRepository;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Locale;
 
 
 @Service
@@ -19,15 +21,17 @@ public class PatientCopyService {
     @PostConstruct
     public void insertPatients() {
 
-        Patient patient = new Patient();
-        //patient.setId(12345L);
-        patient.setDateOfBirth(LocalDate.now().minusYears(30));
-        patient.setAddress("123, new street line");
-        patient.setEmail("chandan74@gmail.com");
-        patient.setName("chandan");
-        patient.setRegisteredDate(LocalDate.now());
+            Faker faker = new Faker(new Locale("en-IND"));
+        for(int i=0;i<=10;i++){
 
-        Patient savedRecord = h2Repo.save(patient);
-        System.out.println("record saved in h2 db during initialization of code = " + savedRecord);
+            Patient patient = new Patient();
+            patient.setDateOfBirth(LocalDate.now().minusYears(i));
+            patient.setAddress(faker.address().fullAddress());
+            patient.setEmail(faker.internet().emailAddress());
+            patient.setName(faker.name().fullName());
+            patient.setRegisteredDate(LocalDate.now().minusDays(i));
+            Patient savedRecord = h2Repo.save(patient);
+            System.out.println("record saved in h2 db during initialization of code = " + savedRecord);
+        }
     }
 }
