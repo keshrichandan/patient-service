@@ -22,7 +22,7 @@ public class PatientCopyService {
     public void insertPatients() {
 
             Faker faker = new Faker(new Locale("en-IND"));
-        for(int i=0;i<=10;i++){
+        for(int i=0;i<=5;i++){
 
             Patient patient = new Patient();
             patient.setDateOfBirth(LocalDate.now().minusYears(i));

@@ -1,10 +1,10 @@
 package com.pm.patient_service.controller;
 
 import com.pm.patient_service.dto.AppointmentRequest;
+import com.pm.patient_service.dto.AppointmentResponse;
 import com.pm.patient_service.dto.PatientRequestDTO;
 import com.pm.patient_service.dto.PatientResponseDTO;
 import com.pm.patient_service.entity.appointmentEntity.Appointment;
-import com.pm.patient_service.service.PatientService;
 import com.pm.patient_service.service.PatientServiceInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -93,9 +93,10 @@ public class PatientController {
     //http://localhost:4000/patients/bookAppointment
     @PostMapping("/bookAppointment")
     @Operation(description="To create patient appointments")
-    public ResponseEntity<Appointment> bookAppointments(@RequestBody AppointmentRequest appointmentRequest){
-        Appointment savedAppointment = patientService.bookAppointment(appointmentRequest);
-        return new ResponseEntity<>(savedAppointment, HttpStatus.OK);
+    public ResponseEntity<AppointmentResponse> bookAppointments(@RequestBody AppointmentRequest appointmentRequest){
+        log.info("getting request to add appointment:{}",appointmentRequest);
+        AppointmentResponse savedAppointment = patientService.bookAppointment(appointmentRequest);
+        return ResponseEntity.ok(savedAppointment);
     }
 
     @GetMapping("/getAllAppointments")

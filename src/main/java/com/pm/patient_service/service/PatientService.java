@@ -1,6 +1,8 @@
 package com.pm.patient_service.service;
 
+import com.pm.patient_service.customAnnotation.TimeLogger;
 import com.pm.patient_service.dto.AppointmentRequest;
+import com.pm.patient_service.dto.AppointmentResponse;
 import com.pm.patient_service.dto.PatientRequestDTO;
 import com.pm.patient_service.dto.PatientResponseDTO;
 import com.pm.patient_service.entity.appointmentEntity.Appointment;
@@ -76,7 +78,7 @@ public class PatientService implements PatientServiceInterface{
          return true;
     }
 
-    public Appointment bookAppointment(AppointmentRequest appointmentRequest){
+    public AppointmentResponse bookAppointment(AppointmentRequest appointmentRequest){
         Patient existingPatient = patientRepository.findById(Long.valueOf(appointmentRequest.getPatientId())).
                 orElseThrow(() -> new PatientNotFoundException(
                 "Patient Not found with id: " + appointmentRequest.getPatientId() + ". Please register."));
@@ -85,12 +87,14 @@ public class PatientService implements PatientServiceInterface{
         aptRequest.setPatientName(existingPatient.getName());
 
         if(!appointmentRepository.findByPatientId(appointmentRequest.getPatientId()).isEmpty()){
-            return null;
+            return AppointmentResponse.builder().message("Appointment already booked!").appointment(null).build();
         }
         System.out.println("appointment result going to be saved: " + aptRequest);
-        return appointmentRepository.save(aptRequest);
+        Appointment savedAppointment = appointmentRepository.save(aptRequest);
+        return new AppointmentResponse("Appointment booked successfully",savedAppointment);
     }
 
+    @TimeLogger
     public List<Appointment> getAllAppointments() {
         return appointmentRepository.findAll();
     }
